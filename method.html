@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How VABAR works — VABAR</title>
+<meta name="description" content="VABAR evaluates how reliably robots repeat a task as objects, layouts and physical conditions vary. Explore six manipulation tasks, controlled variations and baseline results.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/detail.css">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body class="detail-page"><a class="skip-link" href="#main">Skip to content</a>
+<nav class="site-nav" aria-label="Main navigation">
+<div class="site-shell"><a class="brand" href="index.html" aria-label="VABAR home">VABAR<span class="brand-dot">.</span></a>
+<div class="nav-links"><a href="index.html">Overview</a><a href="tasks.html">Tasks</a><a href="method.html" aria-current="page">Method</a><a href="results.html">Results</a><a href="resources.html">Resources</a>
+</div>
+</div>
+</nav>
+<header class="page-intro site-shell">
+<p class="eyebrow">VABAR / How VABAR works</p>
+<h1>How VABAR works</h1>
+<p class="intro-text">Define a task, sample physically admissible variations, then evaluate and inspect the robot’s execution.</p>
+<nav class="jump-links" aria-label="On this page"><a href="#formulation">Task definition</a><a href="#criteria">Design criteria</a><a href="#components">Components</a><a href="#skills">Skill library</a><a href="#records">Execution records</a>
+</nav>
+</header>
+<main id="main" class="shell">
+<section id="formulation">
+  <div class="sechead">
+<h2>What a Variational Automation task is</h2>
+</div>
+  <p class="dek">
+    A VA task class is a tuple. An instance is a draw from it. Admissibility — not randomness — is what makes
+    the draw meaningful.
+  </p>
+
+  <figure class="plate" style="margin-bottom:38px">
+    <div class="frame"><img src="assets/img/framework.jpg" width="2000" height="1125" alt="Framework diagram. Left: task definition from initial configurations, goal configurations, an asset library and a robot definition. Top right: admissible task variation generation across object, arrangement and position, with Level 1 and Level 2 examples for each task. Bottom right: robot policy evaluation across sorting, hanging, gear assembly, insertion and cable routing." loading="lazy">
+</div>
+    <figcaption>
+      <span class="no">Fig. 2</span>
+      <span><strong>Overview of the VABAR evaluation framework.</strong> Left: tasks are specified by initial and goal
+        configurations, an asset library, and robot definitions. Top right: admissible task variations span objects,
+        arrangements and positions, with examples at two levels. Bottom right: robot policies are evaluated across
+        diverse manipulation tasks, including object sorting, tool hanging, gear assembly, insertion and cable routing.</span>
+    </figcaption>
+  </figure>
+
+  <div class="formal">
+    <div class="tuple">
+      <div class="eq"><i>T</i> = (<i>E</i>, <i>R</i>, <i>A</i>, <i>O</i>, <i>p<sub>O</sub></i>, <i>S</i>)</div>
+      <dl class="glossary">
+        <dt>E</dt><dd>Environmental coordinate frames</dd>
+        <dt>R</dt><dd>Robot and gripper specification</dd>
+        <dt>A</dt><dd>Admissible initial assets, each with physical properties and collision mesh</dd>
+        <dt>O</dt><dd>Space of admissible object configurations</dd>
+        <dt>p<sub>O</sub></dt><dd>Distribution over admissible configurations</dd>
+        <dt>S</dt><dd>Measurable success condition</dd>
+      </dl>
+      <p class="foot">
+        An instance <span class="mono">τ<sub>i</sub> = {(a<sub>j</sub>, x<sub>j</sub>)}<sub>j=1..N<sub>i</sub></sub> ∈ O</span>
+        names each instantiated asset <span class="mono">a<sub>j</sub> ∈ A</span> and its initial pose
+        <span class="mono">x<sub>j</sub> ∈ SE(3)</span>, for all <span class="mono">N<sub>i</sub></span> objects and
+        fixtures in the scene. Instances are drawn <span class="mono">τ<sub>i</sub> ~ p<sub>O</sub></span> under a
+        controlled seed.
+      </p>
+    </div>
+
+    <div>
+      <p class="label" style="margin-bottom:14px">Five constraints on admissible variation</p>
+      <ol class="rules">
+        <li><b>Task invariance.</b> All generated instances remain instances of the same VA task.</li>
+        <li><b>Physical feasibility.</b> Generated configurations satisfy physical constraints on object support,
+          collision and geometric consistency, preventing inadmissible initial scene configurations.</li>
+        <li><b>Robot feasibility.</b> Variations are bounded by the operational workspace of the specified robot.
+          Object and fixture configurations are restricted to reachable regions, avoiding failures caused solely
+          by physically inaccessible configurations.</li>
+        <li><b>Controlled difficulty.</b> Each task has levels of difficulty variation regimes; increasing
+          difficulty progressively broadens what the robot has to solve.</li>
+        <li><b>Skill preservation.</b> Variations are designed so that instances across the same difficulty level
+          can be solved using the same underlying set of manipulation skills, or extensions of them.</li>
+      </ol>
+      <p style="margin:20px 0 0;font-size:15.5px;color:var(--ink-2)">
+        The point of the constraint list: <strong style="color:var(--ink)">O is not defined by unconstrained scene
+        randomization.</strong> The variation space and its sampling distribution are designed to represent
+        meaningful changes in the operating conditions of an automation task, where variation is expected rather
+        than anomalous.
+      </p>
+    </div>
+  </div>
+</section>
+<section id="criteria">
+  <div class="sechead">
+<h2>Design criteria for agentic robotics benchmarks</h2>
+</div>
+  <p class="dek">
+    A benchmark for agentic robotics has to evaluate task outcomes without prescribing a program representation
+    or agent architecture, so that generated-code, computation-graph, tool-use, learned-policy and hybrid systems
+    can be compared under common conditions. Seven criteria follow.
+  </p>
+  <div class="criteria">
+    <div class="crit"><span class="k">C1</span>
+<h3>Relevance to agentic robotics</h3>
+<p>Support agents that construct, test and revise robot programs from task specifications, with documented robot and tool interfaces and execution feedback for refinement — without prescribing a program representation.</p>
+</div>
+    <div class="crit"><span class="k">C2</span>
+<h3>Application relevance</h3>
+<p>Tasks and variations reflect realistic operating requirements, with results predictive of real-world success, cycle time and intervention needs.</p>
+</div>
+    <div class="crit"><span class="k">C3</span>
+<h3>Accessibility and clarity</h3>
+<p>Environments, task specifications, assets, metrics and variation parameters are publicly available and clearly documented, so independent researchers can reproduce and extend the evaluation.</p>
+</div>
+    <div class="crit"><span class="k">C4</span>
+<h3>Controlled diversity</h3>
+<p>Each task specifies explicit variation axes and difficulty levels rather than relying solely on unconstrained randomization.</p>
+</div>
+    <div class="crit"><span class="k">C5</span>
+<h3>Repeatability</h3>
+<p>Task generation and evaluation use controlled random seeds and standardised success criteria, supporting repeatable experiments and meaningful comparison between methods.</p>
+</div>
+    <div class="crit"><span class="k">C6</span>
+<h3>Computational efficiency</h3>
+<p>Evaluation stays cheap enough to support repeated experimentation, sensitivity analysis and large-scale benchmarking.</p>
+</div>
+    <div class="crit"><span class="k">C7</span>
+<h3>Durability</h3>
+<p>Systematic extensions of variation range and task complexity keep the benchmark informative as systems improve; extensions are versioned to preserve comparability with previously reported results.</p>
+</div>
+  </div>
+</section>
+<section id="components">
+  <div class="sechead">
+<h2>What the benchmark ships</h2>
+</div>
+  <p class="dek">
+    Four components hold the suite together: a standardised asset library, representative single- and dual-arm
+    embodiments, a declarative task specification, and multi-physics simulation support.
+  </p>
+
+  <div class="split" style="margin-bottom:38px">
+    <div class="cols" style="gap:24px 34px">
+      <div class="c">
+        <p class="label" style="margin-bottom:6px">Asset library</p>
+        <h3>55+ normalised assets</h3>
+        <p>Industrial tools, mechanical components, medical supplies, fixtures, connectors and deformable objects. Assets are normalised in format, scale, appearance and collision geometry to support controlled object and geometric variation across task instances.</p>
+      </div>
+      <div class="c">
+        <p class="label" style="margin-bottom:6px">Robot embodiment</p>
+        <h3>Single-arm Franka, bimanual YAM</h3>
+        <p>Franka provides a widely adopted platform for reproducible tabletop manipulation; YAM enables tasks requiring coordinated bimanual interaction, particularly deformable-object manipulation.</p>
+      </div>
+      <div class="c">
+        <p class="label" style="margin-bottom:6px">Task specification</p>
+        <h3>Declarative, extended BDDL</h3>
+        <p>Tasks declare their objects, initial configurations, variations and success conditions. The Behavior Domain Definition Language is extended to represent both rigid and deformable objects as one specification across the full suite.</p>
+      </div>
+      <div class="c">
+        <p class="label" style="margin-bottom:6px">Physics</p>
+        <h3>Rigid and deformable, unified</h3>
+        <p>NVIDIA Newton provides unified rigid-body and deformable-body dynamics and their interactions, letting the suite span rigid manipulation, contact-rich assembly and insertion, and deformable tasks such as cable routing.</p>
+      </div>
+    </div>
+    <figure class="plate">
+      <div class="frame"><img src="assets/img/asset-bench.jpg" width="1600" height="1069" alt="The asset catalogue on one bench: a pegboard carrying scissors, wrenches, pliers and screwdrivers above clips and holders; on the bench a sharps container, a tray of syringes, two gear rails, two cable routing boards with a red and a blue cable, and rows of hand tools, gears, tape, fasteners and instruments." loading="lazy">
+</div>
+      <figcaption>
+        <span class="no">Plate A</span>
+        <span><strong>The asset catalogue, on one bench.</strong> Every task's assets on a shared table, rebuilt from the sources the tasks themselves use rather than dressed for the photograph — the syringes carry the suite's own collision hulls, the gears and routing boards its own fixtures. Normalising format, scale, appearance and collision geometry is what lets a variation axis mean the same thing in every task that uses it.</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <figure class="plate">
+    <div class="frame"><img src="assets/img/difficulty-levels.jpg" width="1900" height="750" alt="Eight top-down views of a tool tray. The top row shows four widely separated singulated tools; the bottom row shows four trays of overlapping, touching tools." loading="lazy">
+</div>
+    <figcaption>
+      <span class="no">Plate B</span>
+      <span>Controlled difficulty, shown on Tool Sorting. Top row: Level 1, singulated tools with no distractors.
+        Bottom row: Level 2, where tools overlap and grasp selection must account for what is on top of what.
+        Each column is an independently seeded instance of the same task class.</span>
+    </figcaption>
+  </figure>
+</section>
+<section id="skills">
+  <div class="sechead">
+<h2>The skill library</h2>
+</div>
+  <p class="dek">
+    VABAR extends the Modular Open Robot Skill Library with reusable procedures for functional-feature
+    manipulation, constrained placement and deformable cable handling. Building on existing perception, grasp
+    generation and collision-aware planning primitives, the extensions provide metric feature localization,
+    source–destination correspondence, in-hand registration and staged feature mating. Cable skills estimate and
+    track ordered 3D centerlines and support anchoring, routing and terminal placement.
+  </p>
+  <figure class="plate">
+    <div class="frame"><img src="assets/img/skills.jpg" width="2000" height="910" alt="The 33-skill library in four groups: perception and state estimation, grasp proposal and execution, motion planning and execution, and verification. Twenty-five cards are marked as new additions; eight are retained from the earlier library." loading="lazy">
+</div>
+    <figcaption>
+      <span class="no">Fig. 4</span>
+      <span><strong>VABAR skill library.</strong> The 33 skills span perception, grasping, motion planning and
+        execution, and verification. Coloured cards marked “+” identify 25 added skill bundles relative to the May
+        Graph-as-Policy library; white cards denote eight retained counterparts. Additions support
+        functional-feature manipulation, constrained placement, cable handling and execution checks.</span>
+    </figcaption>
+  </figure>
+</section>
+<section id="records">
+  <div class="sechead">
+<h2>Task execution records</h2>
+</div>
+  <p class="dek">
+    Task-level success says whether an execution achieved its objective, not where or why it failed. That matters
+    for agentic robotics, where execution feedback is used to diagnose failures, revise programs and introduce
+    recovery behaviours. VABAR records the evidence needed to relate outcomes to both the program's decisions and
+    the resulting physical interaction.
+  </p>
+
+  <div class="flow">
+    <div class="node priv"><span class="t">Physics state</span><span class="s">s<sub>t</sub></span>
+</div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div class="node"><span class="t">Observation &amp; estimation</span><span class="s">o<sub>t</sub> → ŝ<sub>t</sub></span>
+</div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div class="node"><span class="t">Decision &amp; action</span><span class="s">a<sub>t</sub></span>
+</div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div class="node phys"><span class="t">Physics outcome</span><span class="s">s<sub>t+1</sub>, C<sub>t</sub></span>
+</div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div class="node"><span class="t">Verification</span><span class="s">e<sub>t+1</sub></span>
+</div>
+  </div>
+  <p class="flowkey">
+    <span class="mono">Fig. 3</span> — Diagnostic execution flow. Dashed: privileged simulator state.
+    Dotted: physics contact information used for diagnosis.
+  </p>
+
+  <div class="split">
+    <div>
+      <p class="label" style="margin-bottom:14px">The four mappings that localise a failure</p>
+      <dl class="maps">
+        <dt>o<sub>t</sub> → ŝ<sub>t</sub></dt><dd>Perception or state-estimation failures.</dd>
+        <dt>ŝ<sub>t</sub> → a<sub>t</sub></dt><dd>Program-generation, planning, skill-selection or decision failures.</dd>
+        <dt>a<sub>t</sub> → (s<sub>t+1</sub>, C<sub>t</sub>)</dt><dd>Grasping, motion-execution, collision, contact or other physical-interaction failures.</dd>
+        <dt>(s<sub>t+1</sub>, C<sub>t</sub>) → e<sub>t+1</sub></dt><dd>Task verification, failure detection and recovery triggering.</dd>
+      </dl>
+    </div>
+    <div class="prose">
+      <h3>Why contact is recorded separately from state</h3>
+      <p style="font-size:15.5px;color:var(--ink-2)">
+        Object poses and velocities describe the resulting scene configuration; contact records describe how that
+        configuration arose. A failed placement may leave an object in an incorrect pose, while its contact history
+        reveals whether it collided with a fixture, was supported by another object, or became jammed. VABAR records
+        both so that failure attribution is grounded in the physical execution rather than in task-level success or
+        software error messages alone.
+      </p>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+<div class="site-shell"><a class="brand" href="index.html">VABAR.</a>
+<p>UC Berkeley · NVIDIA · Siemens</p><a href="resources.html#citation">Citation & resources ↗</a>
+</div>
+</footer>
+
+</body></html>
