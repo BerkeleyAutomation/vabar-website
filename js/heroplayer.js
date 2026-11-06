@@ -1,5 +1,5 @@
-/* Front-page player: opens on Tool Sorting and plays it once. Nothing advances by
- * itself: the preview column, the bar or the overview grid choose another task. */
+/* Front-page player: opens on Tool Sorting and plays the tasks in order, returning to
+ * the first after the last. Overview and pausing stop the sequence. */
 (function () {
   var stage = document.querySelector(".stage");
   if (!stage) return;
@@ -65,15 +65,16 @@
   }
 
   videos.forEach(function (v, i) {
-    function finished() {
+    v.addEventListener("ended", function () {
+      if (i === current) showTask((i + 1) % videos.length);
+    });
+    v.addEventListener("error", function () {  // don't advance past a clip that failed to load
       if (i !== current) return;
       cancelAnimationFrame(frame);
-      v.load();  // back to the title frame; stays on this task until someone chooses
+      v.load();
       userPaused = true;
       fill(segs[i], 0);
-    }
-    v.addEventListener("ended", finished);
-    v.addEventListener("error", finished);
+    });
   });
   tiles.forEach(function (t, i) {
     t.addEventListener("click", function () {
