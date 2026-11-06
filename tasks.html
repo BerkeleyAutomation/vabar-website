@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Benchmark details | VABAR</title>
+  <meta name="description" content="VABAR: an open, simulation-based benchmark of six manipulation task classes with standardized variation, difficulty levels and success criteria, for evaluating agentic robotics systems." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="masthead">
+    <a class="lab" href="index.html"><b>VABAR</b></a>
+    <nav class="pages" aria-label="Pages">
+      <a href="index.html">Overview</a>
+      <a href="tasks.html" aria-current="page"><span class="long">Benchmark </span>Details</a>
+      <a href="selflearning.html">Case Study</a>
+    </nav>
+    <nav class="ext" aria-label="Paper and code">
+      <a href="https://arxiv.org/abs/2611.06881" target="_blank" rel="noopener">Paper</a>
+      <a href="https://github.com/BerkeleyAutomation/VABAR" target="_blank" rel="noopener">Code</a>
+    </nav>
+  </header>
+  <nav class="sidenav" aria-label="Sections on this page">
+    <a href="#s5"><span class="n">1</span><span>Tasks</span></a>
+    <a href="#s4"><span class="n">2</span><span>Components</span></a>
+    <a href="#s3"><span class="n">3</span><span>Records</span></a>
+    <a class="pagelink" href="index.html">← Overview</a>
+  </nav>
+
+  <main id="top">
+    <article>
+      <div class="body">
+        <header class="subpage-head">
+          <h1>Benchmark details</h1>
+        </header>
+
+        <section id="s5">
+          <h2><span class="num">1</span>The six task classes</h2>
+          <p>Each class fixes an operational objective and an application setting, then names the axes along which instances vary. Tasks 1–4 run on the single-arm Franka; tasks 5 and 6 use the bimanual YAM.</p>
+
+          <article class="pcard" id="task-tool-sorting">
+            <div class="pmedia"><video src="assets/video/task-tool-sorting.mp4" poster="assets/img/poster-task-tool-sorting.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Tool Sorting, Level 2 · 9× speed"></video></div>
+            <div class="pbody">
+              <div class="ptags"><span class="pchip app">Workshop</span><span class="pchip">Franka</span><span class="pchip">Semantic perception</span></div>
+              <h4><span class="idx">Task 01</span>Tool Sorting</h4>
+              <p class="pover">The robot must place industrial tools into corresponding bins. Instance variation is introduced by changing the tools, their poses, and tool density.</p>
+              <dl class="levels"><dt><span class="lvl l1">L1</span></dt><dd>Singulated tools with no distractors.</dd><dt><span class="lvl l2">L2</span></dt><dd>Cluttered tools that overlap and occlude one another.</dd></dl>
+              <p class="ref">Reference graph (Newton): L1 <b>47.1%</b> · 421.6 s; L2 <b>33.7%</b> · 913.8 s. Clip: Level 2 · 9× speed.</p>
+            </div>
+          </article>
+          <article class="pcard" id="task-tool-hanging">
+            <div class="pmedia"><video src="assets/video/task-tool-hanging.mp4" poster="assets/img/poster-task-tool-hanging.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Tool Hanging, Side view · 4× speed"></video></div>
+            <div class="pbody">
+              <div class="ptags"><span class="pchip app">Workshop</span><span class="pchip">Franka</span><span class="pchip">Constrained placement</span></div>
+              <h4><span class="idx">Task 02</span>Tool Hanging</h4>
+              <p class="pover">The robot must pick up one or more industrial tools (wrenches, screwdrivers, hammers, scissors) and hang or insert them into designated hooks, clips or slots on a pegboard. Variation comes from tool type, the number of tools, initial tool pose and holder pose.</p>
+              <dl class="levels"><dt><span class="lvl l1">L1</span></dt><dd>One tool; known fixture pose.</dd><dt><span class="lvl l2">L2</span></dt><dd>Multiple tools and fixture types; randomized poses.</dd></dl>
+              <p class="ref">Reference graph (Newton): L1 <b>86.7%</b> · 86.1 s; L2 <b>81.7%</b> · 158.4 s. Clip: Side view · 4× speed.</p>
+            </div>
+          </article>
+          <article class="pcard" id="task-gear-meshing">
+            <div class="pmedia"><video src="assets/video/task-gear-meshing.mp4" poster="assets/img/poster-task-gear-meshing.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Gear Meshing, Front view · 4× speed"></video></div>
+            <div class="pbody">
+              <div class="ptags"><span class="pchip app">Assembly</span><span class="pchip">Franka</span><span class="pchip">Tight tolerance</span></div>
+              <h4><span class="idx">Task 03</span>Gear Meshing</h4>
+              <p class="pover">The task input is gears and axles. The robot must pick up multiple gears, assemble them onto axles so that they properly mesh, and press a button to activate the mechanism. Variation covers the number of gears, gear size and initial gear poses. To ensure physically valid instances, scenes can be initialised from a valid assembled configuration before selected gears are removed and repositioned.</p>
+              <dl class="levels"><dt><span class="lvl l1">L1</span></dt><dd>Assemble two gears.</dd><dt><span class="lvl l2">L2</span></dt><dd>Assemble three gears.</dd></dl>
+              <p class="ref">Reference graph (Newton): L1 <b>100.0%</b> · 165.9 s; L2 <b>90.0%</b> · 235.5 s. Clip: Front view · 4× speed.</p>
+            </div>
+          </article>
+          <article class="pcard" id="task-syringe-packing">
+            <div class="pmedia"><video src="assets/video/task-syringe-packing.mp4" poster="assets/img/poster-task-syringe-packing.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Syringe Packing, Agent view · 9× speed"></video></div>
+            <div class="pbody">
+              <div class="ptags"><span class="pchip app">Healthcare</span><span class="pchip">Franka</span><span class="pchip">Constrained insertion</span></div>
+              <h4><span class="idx">Task 04</span>Syringe Packing</h4>
+              <p class="pover">The robot must place syringes into a disposal container while avoiding distractor objects. Instance variation includes the number of objects and the disposal box type.</p>
+              <dl class="levels"><dt><span class="lvl l1">L1</span></dt><dd>Singulated targets.</dd><dt><span class="lvl l2">L2</span></dt><dd>Cluttered scenes with diverse syringe types.</dd></dl>
+              <p class="ref">Reference graph (Newton): L1 <b>87.0%</b> · 228.8 s; L2 <b>63.0%</b> · 472.3 s. Clip: Agent view · 9× speed.</p>
+            </div>
+          </article>
+          <article class="pcard" id="task-cable-insertion">
+            <div class="pmedia"><video src="assets/video/task-cable-insertion.mp4" poster="assets/img/poster-task-cable-insertion.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Cable Insertion, Wrist + support · 3.5× speed"></video></div>
+            <div class="pbody">
+              <div class="ptags"><span class="pchip app">Data centre</span><span class="pchip">YAM, bimanual</span><span class="pchip">Precision alignment</span></div>
+              <h4><span class="idx">Task 05</span>Cable Insertion</h4>
+              <p class="pover">The robot must pick up a connector, align it with a USB-C port and fully insert it. Instance variation includes the position and orientation of the connector and the port.</p>
+              <dl class="levels"><dt><span class="lvl l1">L1</span></dt><dd>Fixed, visible port; nearby connector with small misalignment.</dd><dt><span class="lvl l2">L2</span></dt><dd>Randomized port pose; moderate connector misalignment.</dd></dl>
+              <p class="ref">Reference graph (Newton): L1 <b>86.7%</b> · 78.8 s; L2 <b>30.0%</b> · 74.2 s. Clip: Wrist + support · 3.5× speed.</p>
+            </div>
+          </article>
+          <article class="pcard" id="task-cable-routing">
+            <div class="pmedia"><video src="assets/video/task-cable-routing.mp4" poster="assets/img/poster-task-cable-routing.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Cable Routing, Corner view · 5× speed"></video></div>
+            <div class="pbody">
+              <div class="ptags"><span class="pchip app">Data centre</span><span class="pchip">YAM, bimanual</span><span class="pchip">Deformable objects</span></div>
+              <h4><span class="idx">Task 06</span>Cable Routing</h4>
+              <p class="pover">The robot must route a flexible cable around a specified ordered sequence of cylindrical fixtures mounted on a planar routing board. The task varies the number, position and spacing of pegs; the ordered target sequence; cable length; initial cable configuration; cable slack and curvature; endpoint position; and the 3D pose of the routing board.</p>
+              <dl class="levels"><dt><span class="lvl l1">L1</span></dt><dd>2–3 widely spaced pegs; short route; low turning angle.</dd><dt><span class="lvl l2">L2</span></dt><dd>4–6 moderately spaced pegs; multiple turns; moderate initial cable variation.</dd></dl>
+              <p class="ref">Reference graph (Newton): L1 <b>46.7%</b> · 116.0 s; L2 <b>46.7%</b> · 189.8 s. Clip: Corner view · 5× speed.</p>
+            </div>
+          </article>
+        </section>
+
+        <section id="s4">
+          <h2><span class="num">2</span>What the benchmark ships</h2>
+          <figure class="table-fig">
+            <table>
+              <thead><tr><th>Component</th><th>Choice</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Asset library</th><td>55+ normalised assets</td><td>Industrial tools, mechanical components, medical supplies, fixtures, connectors and deformable objects, normalised in format, scale, appearance and collision geometry.</td></tr>
+                <tr><th scope="row">Robot embodiment</th><td>Single-arm Franka, bimanual YAM</td><td>Franka for reproducible tabletop manipulation; YAM for coordinated bimanual interaction, particularly with deformable objects.</td></tr>
+                <tr><th scope="row">Task specification</th><td>Extended BDDL</td><td>Tasks declare objects, initial configurations, variations and success conditions, for rigid and deformable objects alike.</td></tr>
+                <tr><th scope="row">Physics</th><td>NVIDIA Newton</td><td>Unified rigid and deformable dynamics, spanning rigid manipulation, contact-rich assembly and insertion, and cable routing.</td></tr>
+              </tbody>
+            </table>
+            <figcaption class="fig-caption"><b>Table 1.</b> The four components of the suite.</figcaption>
+          </figure>
+          <figure class="article-fig">
+            <img src="assets/img/asset-bench.jpg" width="1600" height="1069" loading="lazy" alt="The asset catalogue on one bench: a pegboard with hand tools, a sharps container, a tray of syringes, gear rails, cable routing boards, and rows of tools, gears and fasteners." />
+            <figcaption class="fig-caption"><b>Figure 1.</b> The asset catalogue on one bench, rebuilt from the sources the tasks themselves use: the syringes carry the suite's own collision hulls, the gears and routing boards its own fixtures. Normalisation lets a variation axis mean the same thing in every task that uses it.</figcaption>
+          </figure>
+        </section>
+
+        
+        <section id="s3">
+          <h2><span class="num">3</span>Task execution records</h2>
+          <p>Task-level success says whether an execution achieved its objective, not where or why it failed. VABAR records the evidence needed to relate outcomes to both the program's decisions and the resulting physical interaction.</p>
+          <div class="flow" aria-label="Diagnostic execution flow">
+            <span class="n">Physics state<i>s<sub>t</sub></i></span><span class="a">→</span><span class="n">Observation &amp; estimation<i>o<sub>t</sub>→ŝ<sub>t</sub></i></span><span class="a">→</span><span class="n">Decision &amp; action<i>a<sub>t</sub></i></span><span class="a">→</span><span class="n">Physics outcome<i>s<sub>t+1</sub>, C<sub>t</sub></i></span><span class="a">→</span><span class="n">Verification<i>e<sub>t+1</sub></i></span>
+          </div>
+          <figure class="table-fig">
+            <table>
+              <thead><tr><th>Mapping</th><th>Failures it localises</th></tr></thead>
+              <tbody>
+                <tr><th scope="row" class="mono">o<sub>t</sub> → ŝ<sub>t</sub></th><td>Perception or state-estimation failures</td></tr>
+                <tr><th scope="row" class="mono">ŝ<sub>t</sub> → a<sub>t</sub></th><td>Program-generation, planning, skill-selection or decision failures</td></tr>
+                <tr><th scope="row" class="mono">a<sub>t</sub> → (s<sub>t+1</sub>, C<sub>t</sub>)</th><td>Grasping, motion-execution, collision, contact or other physical-interaction failures</td></tr>
+                <tr><th scope="row" class="mono">(s<sub>t+1</sub>, C<sub>t</sub>) → e<sub>t+1</sub></th><td>Task verification, failure detection and recovery triggering</td></tr>
+              </tbody>
+            </table>
+            <figcaption class="fig-caption"><b>Table 2.</b> The four mappings that localise a failure.</figcaption>
+          </figure>
+          <p>Object poses and velocities describe the resulting scene configuration; contact records describe how that configuration arose. A failed placement may leave an object in an incorrect pose, while its contact history reveals whether it collided with a fixture, was supported by another object, or became jammed. VABAR records both, so failure attribution is grounded in the physical execution rather than in task-level success or software error messages alone.</p>
+        </section>
+      </div>
+    </article>
+  </main>
+  <script src="js/sidenav.js" defer></script>
+</body>
+</html>

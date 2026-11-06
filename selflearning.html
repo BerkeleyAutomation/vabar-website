@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Self-learning case study | VABAR</title>
+  <meta name="description" content="How execution feedback and physical-state inspection turned a recurring syringe-packing jam into a new recovery skill." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .clips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 14px 0 6px; }
+    .clips figure, .clip { margin: 0; }
+    .clips video, .clip video { width: 100%; height: auto; border-radius: 6px; background: var(--surface); }
+    .clips figcaption, .clip figcaption { margin-top: 6px; font-family: var(--sans); font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+    .clips figcaption b, .clip figcaption b { display: block; color: var(--ink); }
+    .note { font-family: var(--sans); font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    @media (max-width: 760px) { .clips { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <a class="lab" href="index.html"><b>VABAR</b></a>
+    <nav class="pages" aria-label="Pages">
+      <a href="index.html">Overview</a>
+      <a href="tasks.html"><span class="long">Benchmark </span>Details</a>
+      <a href="selflearning.html" aria-current="page">Case Study</a>
+    </nav>
+    <nav class="ext" aria-label="Paper and code">
+      <a href="https://arxiv.org/abs/2611.06881" target="_blank" rel="noopener">Paper</a>
+      <a href="https://github.com/BerkeleyAutomation/VABAR" target="_blank" rel="noopener">Code</a>
+    </nav>
+  </header>
+  <nav class="sidenav" aria-label="Sections on this page">
+    <a href="#c2"><span class="n">1</span><span>Failure</span></a>
+    <a href="#c3"><span class="n">2</span><span>Diagnosis</span></a>
+    <a href="#c4"><span class="n">3</span><span>New skill</span></a>
+    <a href="#c5"><span class="n">4</span><span>Results</span></a>
+    <a class="pagelink" href="index.html">← Overview</a>
+  </nav>
+  <main id="top">
+    <article>
+      <div class="body">
+        <header class="subpage-head"><h1>Self-learning case study: the syringe jam</h1></header>
+
+        <section id="c1">
+          <p>Task-level success says whether an execution achieved its objective, not where or why it failed. That matters for agentic robotics, where execution feedback is used to diagnose failures, revise programs and introduce recovery behaviours. This case study follows one failure through that loop on Syringe Packing, from a recurring jam to a new skill in the policy graph.</p>
+          <div class="flow" aria-label="The loop in this case study">
+            <span class="n">Run</span><span class="a">→</span><span class="n">Verification fails</span><span class="a">→</span><span class="n">Inspect physical state</span><span class="a">→</span><span class="n">Add a recovery skill</span><span class="a">→</span><span class="n">Run again</span>
+          </div>
+        </section>
+
+        <section id="c2">
+          <h2><span class="num">1</span>The failure</h2>
+          <p>On cluttered trays the graph posts several syringes, then stops. In sweep s6, every failed trial ended the same way. After 3–5 posts, the syringes already in the box stood or leaned under the hole, and the next one landed on them. That syringe was left standing in the aperture, the post-release check returned <span class="mono">blocked</span>, and the episode aborted.</p>
+          <figure class="clip">
+            <video src="assets/video/diag-jam-clip.mp4" poster="assets/img/poster-diag-jam-clip.jpg" controls muted loop playsinline preload="none" aria-label="Episode t01: a syringe jams in the sharps box aperture"></video>
+            <figcaption><b>Video 1. The jam, recorded.</b> Episode t01. Scene view alongside the container mouth.</figcaption>
+          </figure>
+        </section>
+
+        <section id="c3">
+          <h2><span class="num">2</span>The diagnosis</h2>
+          <p>An error message says only that verification failed. Pairing task-level verification with simulator ground-truth inspection identifies the physical conditions behind it. Two jammed episodes, <span class="mono">t01</span> and <span class="mono">t29</span>, terminate with final verification reporting <span class="mono">blocked</span> and 7/8 and 6/8 syringes posted. In both, a syringe straddles the lid plane, with its needle end inside the cavity and its opposite end above the opening.</p>
+          <p>The surrounding syringes sit in different configurations, which shows execution-induced variation: earlier placements alter the geometry encountered by later insertions. The box cavity (89 × 166 × 172 mm) holds about five syringes lying flat, so a tray of 6–8 fills it, and the jam is partly a capacity limit.</p>
+        </section>
+      </div>
+
+      <figure class="wide-fig" id="fig-jam">
+        <img src="assets/img/jam-diagnosis.jpg" width="1900" height="750" loading="lazy" alt="Left: a syringe standing in the sharps box hole, with a top-down view into the box. Right: side and front projections of episodes t01 and t29, with one red syringe crossing the lid plane above blue syringes." />
+        <figcaption class="fig-caption"><b>Figure 1.</b> Physical-state inspection supports failure diagnosis. Left: simulated syringe-packing scene with a top-down inset. Right: ground-truth projections of jammed episodes t01 and t29. Red segments highlight syringes straddling the lid plane; blue segments show other syringes, black dots mark needle ends, and gold outlines indicate container geometry.</figcaption>
+      </figure>
+
+      <div class="body">
+        <section id="c4">
+          <h2><span class="num">3</span>The new skill</h2>
+          <p>The diagnosis points at a specific recovery: a syringe standing on a pile is easy to topple. So the graph gained an unjam step that runs before it gives up. The closed gripper comes top-down over the hole, pushes the fingertips 25 mm below the rim onto the protruding top, and sweeps ±10 mm along the box's long axis. The check then runs again, and only a second <span class="mono">blocked</span> aborts.</p>
+          <div class="clips">
+            <figure>
+              <video src="assets/video/diag-without-skill.mp4" poster="assets/img/poster-diag-without-skill.jpg" controls muted loop playsinline preload="none" aria-label="Without the unjam skill: the graph aborts"></video>
+              <figcaption><b>Video 2. Without the unjam skill.</b> Verification reports blocked and the graph aborts. Speed and run label are burned into the frame.</figcaption>
+            </figure>
+            <figure>
+              <video src="assets/video/diag-with-skill.mp4" poster="assets/img/poster-diag-with-skill.jpg" controls muted loop playsinline preload="none" aria-label="With the unjam skill: the episode completes"></video>
+              <figcaption><b>Video 3. With the unjam skill.</b> The blocked insertion triggers a push-and-re-verify recovery, and the episode completes.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section id="c5">
+          <h2><span class="num">4</span>What changed across sweeps</h2>
+          <p>Each sweep ran the graph over the same 30 cluttered-tray trials, holding 176 syringes in total.</p>
+          <figure class="table-fig">
+            <table>
+              <thead><tr><th>Sweep</th><th>Changes since the previous sweep</th><th class="num">Trials solved</th><th class="num">Syringes posted</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">s6</th><td>Before the unjam recovery</td><td class="num">8 / 30 (27%)</td><td class="num">64%</td></tr>
+                <tr><th scope="row">s7</th><td>Unjam recovery, half-turn grasp, tilt-check fix</td><td class="num">13 / 30 (43%)</td><td class="num">137 / 176 (78%)</td></tr>
+                <tr><th scope="row">s8</th><td>Stricter <span class="mono">blocked</span> threshold, stricter candidate filter, slower reconfiguring turns</td><td class="num">16 / 30 (53%)</td><td class="num">152 / 176 (86%)</td></tr>
+              </tbody>
+            </table>
+            <figcaption class="fig-caption"><b>Table 1.</b> Sweeps of <span class="mono">gap_perception_v2</span> on <span class="mono">tray_clutter</span>, 2026-09-13. Each row bundles several changes, so the gain from s6 to s7 is not the unjam skill's alone. Each trial ran once.</figcaption>
+          </figure>
+          <p>The loop did not finish the task. In s8, 8 of the 14 failures were still box jams, where a later syringe stayed <span class="mono">blocked</span> after the unjam push. Another 4 were grasps stopping short in tight corners, and 2 were syringes that slipped or fell from the fingers, which the seat check correctly refused. The next round of diagnosis starts from those records.</p>
+        </section>
+
+        <p class="nextpage"><a href="tasks.html">See task definitions, components and execution records →</a></p>
+      </div>
+    </article>
+  </main>
+  <footer class="colophon">VABAR · UC Berkeley, NVIDIA, Siemens</footer>
+  <script src="js/sidenav.js" defer></script>
+</body>
+</html>
